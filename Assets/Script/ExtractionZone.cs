@@ -1,0 +1,147 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+using TMPro;
+
+public class ExtractionZone : MonoBehaviour
+{
+    [Header("Extraction Settings")]
+    [Tooltip("เงิน/คะแนนสะสมรวมทั้งหมดที่ส่งของสำเร็จ")]
+    [SerializeField] private int totalLootValue = 0;
+
+    [Header("UI References")]
+    [SerializeField] private TextMeshProUGUI zonePromptText; // UI แสดงปุ่มกด เช่น "[E] Deposit Loot | [F] Escape Mission"
+    [SerializeField] private GameObject endMissionPanel;    // หน้าต่าง UI สรุปผลหลังจบภารกิจ
+    [SerializeField] private TextMeshProUGUI summaryText;    // ข้อความสรุปเงินที่ได้ทั้งหมด
+
+    private bool isPlayerInZone = false;
+    private PlayerInventory playerInventory;
+
+    public int TotalLootValue => totalLootValue;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") || other.GetComponent<PlayerInventory>() != null)
+        {
+            isPlayerInZone = true;
+            playerInventory = other.GetComponent<PlayerInventory>();
+            UpdateZonePrompt();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") || other.GetComponent<PlayerInventory>() != null)
+        {
+            isPlayerInZone = false;
+            playerInventory = null;
+
+            if (zonePromptText != null)
+            {
+                zonePromptText.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (!isPlayerInZone || playerInventory == null) return;
+
+        UpdateZonePrompt();
+        HandleInputs();
+    }
+
+    private void UpdateZonePrompt()
+    {
+        if (zonePromptText == null) return;
+
+        zonePromptText.gameObject.SetActive(true);
+
+        if (playerInventory.Items.Count > 0)
+        {
+            zonePromptText.text = $"[E] Deposit Loot \nTotal Stash: ${totalLootValue}";
+        }
+        else
+        {
+            zonePromptText.text = $"[F] Escape Mission \nTotal Stash: ${totalLootValue}";
+        }
+    }
+
+    private void HandleInputs()
+    {
+        if (Keyboard.current == null) return;
+
+        // กด E เพื่อส่งของทั้งหมดที่มีในตัว
+        if (Keyboard.current.eKey.wasPressedThisFrame && playerInventory.Items.Count > 0)
+        {
+            DepositAllLoot();
+        }
+
+        // กด F เพื่อจบภารกิจ
+        if (Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            EscapeMission();
+        }
+    }
+
+    private void DepositAllLoot()
+    {
+        int depositedValue = 0;
+        int itemAmount = playerInventory.Items.Count;
+
+        // ดึงรายการไอเทมทั้งหมดมาคำนวณมูลค่า
+        var itemsList = new System.Collections.Generic.List<ItemData>(playerInventory.Items);
+        for (int i = itemsList.Count - 1; i >= 0; i--)
+        {
+            depositedValue += itemsList[i].value;
+            playerInventory.RemoveItemAt(i);
+        }
+
+        totalLootValue += depositedValue;
+
+        // ให้ PlayerItemHolder ถือมือเปล่าหลังจากล้างกระเป๋า
+        PlayerItemHolder itemHolder = playerInventory.GetComponent<PlayerItemHolder>();
+        if (itemHolder != null)
+        {
+            itemHolder.EquipHandsFree();
+        }
+
+        Debug.Log($"[Extraction] Deposited {itemAmount} items for ${depositedValue}. Total: ${totalLootValue}");
+        UpdateZonePrompt();
+    }
+
+    private void EscapeMission()
+    {
+        // ปลดล็อกเมาส์
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // หยุดเวลาเกม (Pause)
+        Time.timeScale = 0f;
+
+        if (zonePromptText != null)
+        {
+            zonePromptText.gameObject.SetActive(false);
+        }
+
+        // แสดง UI หน้าสรุปผลภารกิจ
+        if (endMissionPanel != null)
+        {
+            endMissionPanel.SetActive(true);
+        }
+
+        if (summaryText != null)
+        {
+            summaryText.text = $"MISSION COMPLETED!\n\nTotal Loot Secured: ${totalLootValue}";
+        }
+    }
+
+    // ฟังก์ชันวาดรูปสี่เหลี่ยมสีเหลืองในหน้า Gizmos (Editor View)
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(1f, 0.92f, 0.016f, 0.4f);
+        Gizmos.matrix = transform.localToWorldMatrix;
+        Gizmos.DrawCube(Vector3.zero, Vector3.one);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
+    }
+}

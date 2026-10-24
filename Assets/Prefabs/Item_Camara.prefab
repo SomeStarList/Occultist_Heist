@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3455981696065343000
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 9.752
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7951666
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      propertyPath: m_Name
+      value: Item_Camara
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6353951319665802713}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5296713079709873808}
+  m_SourcePrefab: {fileID: 100100000, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+--- !u!1 &2537625399600821065 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+  m_PrefabInstance: {fileID: 3455981696065343000}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &6353951319665802713
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537625399600821065}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.095, y: 0.054171298, z: 0.045297757}
+  m_Center: {x: 0, y: 0.04282724, z: 0.0121488795}
+--- !u!114 &5296713079709873808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2537625399600821065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 722d485a77ed5a040b7d130582dd952e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LootItem
+  itemName: Camara
+  weight: 1
+  value: 1000
+  itemType: 0
+  icon: {fileID: 0}
+  dropPrefab: {fileID: 919132149155446097, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
+  heldModelPrefab: {fileID: 919132149155446097, guid: a553ec97f5c44e94bb830170da5c7771, type: 3}
