@@ -111,19 +111,28 @@ public class ExtractionZone : MonoBehaviour
 
     private void EscapeMission()
     {
-        // ปลดล็อกเมาส์
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        // 0. หยุดการทำงานของ Trigger ภายในสคริปต์นี้เพื่อไม่ให้ Update() ทำงานต่อ
+        isPlayerInZone = false;
 
-        // หยุดเวลาเกม (Pause)
-        Time.timeScale = 0f;
-
-        if (zonePromptText != null)
+        // 1. ล็อกการหันหน้าและปลดล็อกเคอร์เซอร์เมาส์
+        PlayerController playerController = playerInventory != null ? playerInventory.GetComponent<PlayerController>() : FindFirstObjectByType<PlayerController>();
+        if (playerController != null)
         {
-            zonePromptText.gameObject.SetActive(false);
+            playerController.SetLockLook(true);
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
-        // แสดง UI หน้าสรุปผลภารกิจ
+        // 2. หยุดเวลาเกม (Pause)
+        Time.timeScale = 0f;
+
+        // 3. ปิด UI บนหน้าจอทั้งหมด
+        HideAllGameplayUI();
+
+        // 4. แสดงเฉพาะ UI หน้าสรุปผลภารกิจ
         if (endMissionPanel != null)
         {
             endMissionPanel.SetActive(true);
@@ -131,7 +140,30 @@ public class ExtractionZone : MonoBehaviour
 
         if (summaryText != null)
         {
-            summaryText.text = $"MISSION COMPLETED!\n\nTotal Loot Secured: ${totalLootValue}";
+            summaryText.text = $"MISSION COMPLETED!\n\nTotal Loot : ${totalLootValue}";
+        }
+    }
+
+    private void HideAllGameplayUI()
+    {
+        // สั่งปิดข้อความ ExtractionPromptText โดยตรงเป็นอันดับแรก
+        if (zonePromptText != null)
+        {
+            zonePromptText.gameObject.SetActive(false);
+        }
+
+        // ซ่อน Child ทุกตัวใต้ Canvas (ยกเว้น endMissionPanel)
+        Canvas mainCanvas = FindFirstObjectByType<Canvas>();
+        if (mainCanvas != null)
+        {
+            foreach (Transform child in mainCanvas.transform)
+            {
+                if (endMissionPanel != null && (child.gameObject == endMissionPanel || child.IsChildOf(endMissionPanel.transform)))
+                {
+                    continue; // ข้าม Panel สรุปผล
+                }
+                child.gameObject.SetActive(false);
+            }
         }
     }
 

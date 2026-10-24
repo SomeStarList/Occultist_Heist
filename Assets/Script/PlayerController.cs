@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float upDownLimit = 85f;
+    private bool isLookLocked = false;
 
     [Header("Crouch Settings")]
     [SerializeField] private float standingHeight = 2.0f;
@@ -206,6 +207,9 @@ public class PlayerController : MonoBehaviour
 
     private void HandleLook()
     {
+        // ถ้าระบบโดนล็อกอยู่ (เช่น ตอนขึ้นหน้าต่างจบภารกิจ) ให้ข้ามการหมุนกล้องไปเลย
+        if (isLookLocked) return;
+
         transform.Rotate(Vector3.up * lookInput.x);
 
         verticalRotation -= lookInput.y;
@@ -214,6 +218,23 @@ public class PlayerController : MonoBehaviour
         if (cameraTransform != null)
         {
             cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+        }
+    }
+
+    // ฟังก์ชันสำหรับสั่งล็อก/ปลดล็อกการหันหน้า
+    public void SetLockLook(bool isLocked)
+    {
+        isLookLocked = isLocked;
+
+        if (isLocked)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 
