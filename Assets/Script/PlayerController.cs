@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float mouseSensitivity = 0.1f;
     [SerializeField] private float upDownLimit = 85f;
     private bool isLookLocked = false;
+    [SerializeField] private GameObject Crosshair;
 
     [Header("Crouch Settings")]
     [SerializeField] private float standingHeight = 2.0f;
@@ -86,6 +87,8 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        Crosshair.gameObject.SetActive(false);
+
         UpdateStaminaUI();
         StartCoroutine(PlayIntroSequence());
     }
@@ -128,6 +131,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
+        Crosshair.gameObject.SetActive(true);
         cameraTransform.localPosition = finalLocalPos;
 
         if (characterModel != null)
