@@ -111,25 +111,26 @@ public class ExtractionZone : MonoBehaviour
 
     private void EscapeMission()
     {
-        // 0. หยุดการทำงานของ Trigger ภายในสคริปต์นี้เพื่อไม่ให้ Update() ทำงานต่อ
         isPlayerInZone = false;
 
-        // 1. ล็อกการหันหน้าและปลดล็อกเคอร์เซอร์เมาส์
+        // 1. คืนค่าการสแกน Input ของ EventSystem ให้ทำงานแน่ๆ
+        UnityEngine.EventSystems.EventSystem currentEventSys = UnityEngine.EventSystems.EventSystem.current;
+        if (currentEventSys != null)
+        {
+            currentEventSys.enabled = true;
+        }
+
+        // 2. ปลดล็อกเคอร์เซอร์เมาส์และล็อกการมอง
         PlayerController playerController = playerInventory != null ? playerInventory.GetComponent<PlayerController>() : FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {
             playerController.SetLockLook(true);
         }
-        else
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
 
-        // 2. หยุดเวลาเกม (Pause)
-        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
-        // 3. ปิด UI บนหน้าจอทั้งหมด
+        // 3. ปิด UI อื่นๆ
         HideAllGameplayUI();
 
         // 4. แสดงเฉพาะ UI หน้าสรุปผลภารกิจ
@@ -142,29 +143,50 @@ public class ExtractionZone : MonoBehaviour
         {
             summaryText.text = $"MISSION COMPLETED!\n\nTotal Loot : ${totalLootValue}";
         }
+
+        // 5. หยุดเวลาเกมหลังจัดการ UI เสร็จ
+        Time.timeScale = 0f;
     }
 
     private void HideAllGameplayUI()
     {
-        // สั่งปิดข้อความ ExtractionPromptText โดยตรงเป็นอันดับแรก
         if (zonePromptText != null)
         {
             zonePromptText.gameObject.SetActive(false);
         }
 
-        // ซ่อน Child ทุกตัวใต้ Canvas (ยกเว้น endMissionPanel)
         Canvas mainCanvas = FindFirstObjectByType<Canvas>();
         if (mainCanvas != null)
         {
             foreach (Transform child in mainCanvas.transform)
             {
+                // ข้าม endMissionPanel
                 if (endMissionPanel != null && (child.gameObject == endMissionPanel || child.IsChildOf(endMissionPanel.transform)))
                 {
-                    continue; // ข้าม Panel สรุปผล
+                    continue;
                 }
+
+                // ข้าม EventSystem
+                if (child.GetComponent<UnityEngine.EventSystems.EventSystem>() != null)
+                {
+                    continue;
+                }
+
                 child.gameObject.SetActive(false);
             }
         }
+    }
+
+    public void RestartLevel()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+    }
+
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
     }
 
     // ฟังก์ชันวาดรูปสี่เหลี่ยมสีเหลืองในหน้า Gizmos (Editor View)
