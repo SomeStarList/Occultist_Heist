@@ -80,6 +80,9 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1f;
+
+        isLookLocked = false;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
