@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        isLookLocked = false;
+        SetLockLook(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -93,6 +93,15 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         ApplyGravity();
+
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            if (!isLookLocked && Cursor.lockState != CursorLockMode.Locked)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+        }
 
         if (!isIntroFinished) return;
 
