@@ -15,20 +15,11 @@ public class PauseMenuManager : MonoBehaviour
 
     public bool IsPaused => isPaused;
 
-    private void Awake()
-    {
-        if (playerController == null)
-        {
-            playerController = FindFirstObjectByType<PlayerController>();
-        }
-    }
-
     private void Start()
     {
-        if (pauseMenuPanel != null)
-        {
-            pauseMenuPanel.SetActive(false);
-        }
+        Time.timeScale = 1f;
+
+        playerController.SetLockLook(false);
     }
 
     private void Update()
@@ -105,6 +96,17 @@ public class PauseMenuManager : MonoBehaviour
     public void OnRestartButtonPressed()
     {
         Time.timeScale = 1f;
+
+        if (playerController != null)
+        {
+            playerController.SetLockLook(false);
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

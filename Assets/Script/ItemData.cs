@@ -2,9 +2,9 @@ using UnityEngine;
 
 public enum ItemType
 {
-    Loot,       // ของมีค่า/ขโมยมาขาย
-    Tool,       // อุปกรณ์ เช่น ไฟฉาย, ไฟแช็ก
-    Key         // กุญแจ/ไอเทมเควสต์
+    Loot,
+    Tool,
+    Key
 }
 
 [System.Serializable]
@@ -16,7 +16,7 @@ public class ItemData
     public ItemType itemType;
     public Sprite icon;
     public GameObject dropPrefab;
-    public GameObject heldModelPrefab; // โมเดลที่จะแสดงในมือ
+    public GameObject heldModelPrefab;
 
     public ItemData(string name, float weight, int value, ItemType type, Sprite icon = null, GameObject dropPrefab = null, GameObject heldModel = null)
     {

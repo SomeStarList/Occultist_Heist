@@ -5,13 +5,12 @@ using TMPro;
 public class ExtractionZone : MonoBehaviour
 {
     [Header("Extraction Settings")]
-    [Tooltip("เงิน/คะแนนสะสมรวมทั้งหมดที่ส่งของสำเร็จ")]
     [SerializeField] private int totalLootValue = 0;
 
     [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI zonePromptText; // UI แสดงปุ่มกด เช่น "[E] Deposit Loot | [F] Escape Mission"
-    [SerializeField] private GameObject endMissionPanel;    // หน้าต่าง UI สรุปผลหลังจบภารกิจ
-    [SerializeField] private TextMeshProUGUI summaryText;    // ข้อความสรุปเงินที่ได้ทั้งหมด
+    [SerializeField] private TextMeshProUGUI zonePromptText;
+    [SerializeField] private GameObject endMissionPanel;
+    [SerializeField] private TextMeshProUGUI summaryText;
 
     private bool isPlayerInZone = false;
     private PlayerInventory playerInventory;
@@ -70,13 +69,11 @@ public class ExtractionZone : MonoBehaviour
     {
         if (Keyboard.current == null) return;
 
-        // กด E เพื่อส่งของทั้งหมดที่มีในตัว
         if (Keyboard.current.eKey.wasPressedThisFrame && playerInventory.Items.Count > 0)
         {
             DepositAllLoot();
         }
 
-        // กด F เพื่อจบภารกิจ
         if (Keyboard.current.fKey.wasPressedThisFrame)
         {
             EscapeMission();
@@ -88,7 +85,6 @@ public class ExtractionZone : MonoBehaviour
         int depositedValue = 0;
         int itemAmount = playerInventory.Items.Count;
 
-        // ดึงรายการไอเทมทั้งหมดมาคำนวณมูลค่า
         var itemsList = new System.Collections.Generic.List<ItemData>(playerInventory.Items);
         for (int i = itemsList.Count - 1; i >= 0; i--)
         {
@@ -98,7 +94,6 @@ public class ExtractionZone : MonoBehaviour
 
         totalLootValue += depositedValue;
 
-        // ให้ PlayerItemHolder ถือมือเปล่าหลังจากล้างกระเป๋า
         PlayerItemHolder itemHolder = playerInventory.GetComponent<PlayerItemHolder>();
         if (itemHolder != null)
         {
@@ -113,14 +108,12 @@ public class ExtractionZone : MonoBehaviour
     {
         isPlayerInZone = false;
 
-        // 1. คืนค่าการสแกน Input ของ EventSystem ให้ทำงานแน่ๆ
         UnityEngine.EventSystems.EventSystem currentEventSys = UnityEngine.EventSystems.EventSystem.current;
         if (currentEventSys != null)
         {
             currentEventSys.enabled = true;
         }
 
-        // 2. ปลดล็อกเคอร์เซอร์เมาส์และล็อกการมอง
         PlayerController playerController = playerInventory != null ? playerInventory.GetComponent<PlayerController>() : FindFirstObjectByType<PlayerController>();
         if (playerController != null)
         {
@@ -130,10 +123,8 @@ public class ExtractionZone : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // 3. ปิด UI อื่นๆ
         HideAllGameplayUI();
 
-        // 4. แสดงเฉพาะ UI หน้าสรุปผลภารกิจ
         if (endMissionPanel != null)
         {
             endMissionPanel.SetActive(true);
@@ -144,7 +135,6 @@ public class ExtractionZone : MonoBehaviour
             summaryText.text = $"MISSION COMPLETED!\n\nTotal Loot : ${totalLootValue}";
         }
 
-        // 5. หยุดเวลาเกมหลังจัดการ UI เสร็จ
         Time.timeScale = 0f;
     }
 
@@ -160,13 +150,11 @@ public class ExtractionZone : MonoBehaviour
         {
             foreach (Transform child in mainCanvas.transform)
             {
-                // ข้าม endMissionPanel
                 if (endMissionPanel != null && (child.gameObject == endMissionPanel || child.IsChildOf(endMissionPanel.transform)))
                 {
                     continue;
                 }
 
-                // ข้าม EventSystem
                 if (child.GetComponent<UnityEngine.EventSystems.EventSystem>() != null)
                 {
                     continue;
@@ -177,25 +165,4 @@ public class ExtractionZone : MonoBehaviour
         }
     }
 
-    public void RestartLevel()
-    {
-        Time.timeScale = 1f;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-    }
-
-    public void GoToMainMenu()
-    {
-        Time.timeScale = 1f;
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
-    }
-
-    // ฟังก์ชันวาดรูปสี่เหลี่ยมสีเหลืองในหน้า Gizmos (Editor View)
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = new Color(1f, 0.92f, 0.016f, 0.4f);
-        Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.DrawCube(Vector3.zero, Vector3.one);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
-    }
 }

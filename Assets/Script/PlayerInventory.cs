@@ -5,20 +5,18 @@ using TMPro;
 public class PlayerInventory : MonoBehaviour
 {
     [Header("Capacity Settings")]
-    [SerializeField] private int maxSlots = 5;       // ปรับจำนวนช่องได้ใน Inspector
-    [SerializeField] private float maxWeight = 10f;   // น้ำหนักสูงสุด 10KG
+    [SerializeField] private int maxSlots = 5;
+    [SerializeField] private float maxWeight = 10f;
     [SerializeField] private float currentWeight = 0f;
 
     [Header("Starting Equipment")]
-    [Tooltip("ไอเทมที่พกมาตั้งแต่เริ่ม เช่น ไฟฉาย")]
     [SerializeField] private List<LootItem> startingEquipments = new List<LootItem>();
 
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI weightText;
-    [SerializeField] private TextMeshProUGUI slotText; // UI แสดงจำนวนช่อง เช่น "Slots: 2/5"
+    [SerializeField] private TextMeshProUGUI slotText;
     [SerializeField] private NotificationUI notificationUI;
 
-    // รายการของในตัว
     private List<ItemData> items = new List<ItemData>();
 
     public float CurrentWeight => currentWeight;
@@ -36,7 +34,6 @@ public class PlayerInventory : MonoBehaviour
 
     private void Start()
     {
-        // โหลดไอเทมเริ่มต้นที่ซื้อติดตัวมา
         foreach (var equip in startingEquipments)
         {
             if (equip != null)
@@ -48,7 +45,6 @@ public class PlayerInventory : MonoBehaviour
         UpdateUI();
     }
 
-    // ตรวจสอบเงื่อนไขว่าเก็บได้ไหม
     public bool CanCarry(float additionalWeight, out string reason)
     {
         if (items.Count >= maxSlots)
@@ -67,7 +63,6 @@ public class PlayerInventory : MonoBehaviour
         return true;
     }
 
-    // เก็บผ่าน LootItem ในฉาก
     public bool TryCollectLoot(LootItem loot)
     {
         if (loot == null) return false;
@@ -82,7 +77,6 @@ public class PlayerInventory : MonoBehaviour
         return false;
     }
 
-    // เพิ่มข้อมูลไอเทมเข้ากระเป๋า
     public bool TryAddItem(ItemData newItem)
     {
         if (newItem == null) return false;
@@ -101,7 +95,6 @@ public class PlayerInventory : MonoBehaviour
 
             UpdateUI();
 
-            // แจ้งเตือน Popup
             if (notificationUI != null)
             {
                 string itemWeightStr = (newItem.weight % 1 == 0) ? newItem.weight.ToString("F0") : newItem.weight.ToString("F1");
@@ -115,7 +108,6 @@ public class PlayerInventory : MonoBehaviour
             return true;
         }
 
-        // กรณีเก็บไม่ได้ แล้วมี Notification เตือน
         if (notificationUI != null)
         {
             notificationUI.ShowNotification(failReason);
@@ -139,7 +131,6 @@ public class PlayerInventory : MonoBehaviour
         }
     }
 
-    // ลบไอเทมตามตำแหน่ง index ออกจากกระเป๋าและคืนข้อมูลไอเทมนั้นออกมา พร้อมแจ้งเตือน Popup
     public ItemData RemoveItemAt(int index)
     {
         if (index < 0 || index >= items.Count) return null;
@@ -152,7 +143,6 @@ public class PlayerInventory : MonoBehaviour
 
         UpdateUI();
 
-        // แจ้งเตือน Popup เมื่อโยน/ทิ้งของ
         if (notificationUI != null)
         {
             string itemWeightStr = (removedItem.weight % 1 == 0) ? removedItem.weight.ToString("F0") : removedItem.weight.ToString("F1");

@@ -7,15 +7,11 @@ using TMPro;
 public class PlayerItemHolder : MonoBehaviour
 {
     [Header("Hold Settings")]
-    [Tooltip("จุดว่างใต้กล้องที่ไว้สปอว์นโมเดลไอเทมในมือ")]
     [SerializeField] private Transform itemHoldPoint;
 
     [Header("Drop / Throw Settings")]
-    [Tooltip("กล้องมุมมองบุคคลที่หนึ่ง")]
     [SerializeField] private Transform cameraTransform;
-    [Tooltip("แรงโยนไปข้างหน้า")]
     [SerializeField] private float throwForce = 4.0f;
-    [Tooltip("แรงโยนเสยขึ้นเล็กน้อยให้ดูเป็นธรรมชาติ")]
     [SerializeField] private float throwUpwardForce = 1.5f;
 
     [Header("UI Feedback")]
@@ -53,7 +49,6 @@ public class PlayerItemHolder : MonoBehaviour
 
     private void HandleDropInput()
     {
-        // ตรวจสอบการกดปุ่ม G เพื่อโยนของที่ถืออยู่
         if (Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
         {
             DropCurrentItem();
@@ -73,7 +68,6 @@ public class PlayerItemHolder : MonoBehaviour
             currentSpawnedItem = null;
         }
 
-        // เสกไอเทมหน้ากล้อง
         Vector3 spawnPosition = cameraTransform != null
             ? cameraTransform.position + (cameraTransform.forward * 0.8f)
             : transform.position + (transform.forward * 0.8f) + Vector3.up * 1.0f;
@@ -86,21 +80,17 @@ public class PlayerItemHolder : MonoBehaviour
         {
             GameObject droppedObj = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
 
-            // 1. ให้แน่ใจว่าเปิดใช้งาน GameObject
             droppedObj.SetActive(true);
 
-            // 2. จัดการ Collider ให้พร้อมเก็บ
             Collider[] existingCols = droppedObj.GetComponentsInChildren<Collider>(true);
             if (existingCols.Length == 0)
             {
-                // ถ้าไม่มี Collider เลย ให้สร้าง BoxCollider ขึ้นมาใหม่
                 BoxCollider boxCol = droppedObj.AddComponent<BoxCollider>();
                 boxCol.enabled = true;
                 boxCol.isTrigger = false;
             }
             else
             {
-                // เปิด Collider ทั้งหมดที่มีในโมเดล
                 foreach (var c in existingCols)
                 {
                     c.enabled = true;
@@ -108,7 +98,6 @@ public class PlayerItemHolder : MonoBehaviour
                 }
             }
 
-            // 3. จัดการ Rigidbody
             Rigidbody rb = droppedObj.GetComponent<Rigidbody>();
             if (rb == null)
             {
@@ -117,12 +106,10 @@ public class PlayerItemHolder : MonoBehaviour
             rb.isKinematic = false;
             rb.useGravity = true;
 
-            // 4. ใส่แรงโยน
             Vector3 throwDirection = cameraTransform != null ? cameraTransform.forward : transform.forward;
             rb.linearVelocity = (throwDirection * throwForce) + (Vector3.up * throwUpwardForce);
             rb.AddTorque(Random.insideUnitSphere * 2f, ForceMode.Impulse);
 
-            // 5. ติดตั้ง LootItem และเซ็ตข้อมูลเดิม
             LootItem loot = droppedObj.GetComponent<LootItem>();
             if (loot == null)
             {
@@ -130,7 +117,6 @@ public class PlayerItemHolder : MonoBehaviour
             }
             loot.Initialize(droppedItemData);
 
-            // 6. ตั้ง Layer ให้เป็น Default (หรือตรงกับ interactableLayer)
             droppedObj.layer = LayerMask.NameToLayer("Default");
             foreach (Transform child in droppedObj.transform)
             {
@@ -138,7 +124,6 @@ public class PlayerItemHolder : MonoBehaviour
             }
         }
 
-        // จัดการของในมือต่อ
         if (inventory.Items.Count > 0)
         {
             int nextIndex = Mathf.Clamp(selectedIndex, 0, inventory.Items.Count - 1);
@@ -198,35 +183,29 @@ public class PlayerItemHolder : MonoBehaviour
         selectedIndex = index;
         ItemData selectedItem = items[selectedIndex];
 
-        // 1. ทำลายโมเดลเก่าทิ้ง
         if (currentSpawnedItem != null)
         {
             Destroy(currentSpawnedItem);
             currentSpawnedItem = null;
         }
 
-        // 2. ตรวจสอบว่ามี Prefab สำหรับถือหรือไม่
         GameObject modelToSpawn = selectedItem.heldModelPrefab != null ? selectedItem.heldModelPrefab : selectedItem.dropPrefab;
 
         if (modelToSpawn != null && itemHoldPoint != null)
         {
             currentSpawnedItem = Instantiate(modelToSpawn, itemHoldPoint);
 
-            // รีเซ็ตตำแหน่ง การหมุน และขนาด ให้ตรงกับจุดถือเสมอ
             currentSpawnedItem.transform.localPosition = Vector3.zero;
             currentSpawnedItem.transform.localRotation = Quaternion.identity;
 
-            // ถ้าโมเดลเดิมมีขนาดแปลกๆ ให้คืนค่าเป็นขนาดปกติของ Prefab หรือ Vector3.one
             currentSpawnedItem.transform.localScale = modelToSpawn.transform.localScale;
 
-            // ปิด Collider ของโมเดลที่ถือในมือ เพื่อไม่ให้ชนตัวผู้เล่นหรือดันกล้องหลุด
             Collider[] colliders = currentSpawnedItem.GetComponentsInChildren<Collider>();
             foreach (var col in colliders)
             {
                 col.enabled = false;
             }
 
-            // ถ้ามี Rigidbody ให้ปิดฟิสิกส์ ไม่ให้ตกหล่น
             Rigidbody rb = currentSpawnedItem.GetComponent<Rigidbody>();
             if (rb != null)
             {

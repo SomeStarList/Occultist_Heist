@@ -9,7 +9,7 @@ public class LootItem : MonoBehaviour
     [SerializeField] private ItemType itemType = ItemType.Loot;
     [SerializeField] private Sprite icon;
     [SerializeField] private GameObject dropPrefab;
-    [Tooltip("โมเดลที่จะแสดงที่มือผู้เล่นเมื่อเลือกไอเทมนี้")]
+
     [SerializeField] private GameObject heldModelPrefab;
 
     public string ItemName => itemName;

@@ -13,9 +13,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float gravity = -9.81f;
 
     [Header("Weight Penalty Settings")]
-    [Tooltip("ความเร็วต่ำสุดเมื่อแบกน้ำหนักเต็ม 10KG (เช่น 0.5 คือลดเหลือ 50% ของความเร็วปกติ)")]
-    [Range(0.2f, 1.0f)]
-    [SerializeField] private float minSpeedMultiplier = 0.5f;
+    [Range(0.2f, 1.0f)][SerializeField] private float minSpeedMultiplier = 0.5f;
 
     [Header("Stamina Settings")]
     [SerializeField] private float maxStamina = 100f;
@@ -45,14 +43,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float introDuration = 2.0f;
 
     private CharacterController controller;
-    private PlayerInventory inventory; // อ้างอิงระบบกระเป๋า
+    private PlayerInventory inventory;
     private Vector2 moveInput;
     private Vector2 lookInput;
     private float verticalVelocity;
     private float verticalRotation = 0f;
     private bool isIntroFinished = false;
 
-    // ตัวแปรสถานะ
     private bool isCrouching = false;
     private bool isSprinting = false;
     private float currentHeight;
@@ -66,7 +63,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
-        inventory = GetComponent<PlayerInventory>(); // ดึงคอมโพเนนต์กระเป๋า
+        inventory = GetComponent<PlayerInventory>();
         currentHeight = standingHeight;
         currentStamina = maxStamina;
 
@@ -214,7 +211,6 @@ public class PlayerController : MonoBehaviour
 
     private void HandleLook()
     {
-        // ถ้าระบบโดนล็อกอยู่ (เช่น ตอนขึ้นหน้าต่างจบภารกิจ) ให้ข้ามการหมุนกล้องไปเลย
         if (isLookLocked) return;
 
         transform.Rotate(Vector3.up * lookInput.x);
@@ -228,7 +224,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // ฟังก์ชันสำหรับสั่งล็อก/ปลดล็อกการหันหน้า
     public void SetLockLook(bool isLocked)
     {
         isLookLocked = isLocked;
@@ -278,15 +273,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // คำนวณตัวคูณความเร็วจากน้ำหนักปัจจุบัน
     private float GetWeightSpeedMultiplier()
     {
         if (inventory == null || inventory.MaxWeight <= 0f) return 1f;
 
-        // อัตราส่วนน้ำหนักปัจจุบัน 0.0 ถึง 1.0
         float weightRatio = Mathf.Clamp01(inventory.CurrentWeight / inventory.MaxWeight);
 
-        // คำนวณความเร็วลดหลั่นลงมา: 0KG = 1.0 (100%), 10KG = minSpeedMultiplier
         return Mathf.Lerp(1.0f, minSpeedMultiplier, weightRatio);
     }
 
@@ -306,7 +298,6 @@ public class PlayerController : MonoBehaviour
             baseSpeed = walkSpeed;
         }
 
-        // ปรับความเร็วตามน้ำหนักกระเป๋า
         float finalSpeed = baseSpeed * GetWeightSpeedMultiplier();
 
         Vector3 moveDirection = (transform.forward * moveInput.y + transform.right * moveInput.x);
