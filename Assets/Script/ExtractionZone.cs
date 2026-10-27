@@ -57,7 +57,7 @@ public class ExtractionZone : MonoBehaviour
 
         if (playerInventory.Items.Count > 0)
         {
-            zonePromptText.text = $"[E] Deposit Loot \nTotal Stash: ${totalLootValue}";
+            zonePromptText.text = $"[E] Sale Loot \nTotal Stash: ${totalLootValue}";
         }
         else
         {

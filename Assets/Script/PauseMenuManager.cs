@@ -28,6 +28,7 @@ public class PauseMenuManager : MonoBehaviour
         {
             TogglePause();
         }
+
     }
 
     public void TogglePause()
