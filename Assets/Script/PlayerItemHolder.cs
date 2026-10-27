@@ -117,6 +117,19 @@ public class PlayerItemHolder : MonoBehaviour
             }
             loot.Initialize(droppedItemData);
 
+            Outline outline = droppedObj.GetComponent<Outline>();
+            if (outline == null)
+            {
+                outline = droppedObj.AddComponent<Outline>();
+            }
+            outline.enabled = true;
+
+            droppedObj.layer = LayerMask.NameToLayer("Default");
+            foreach (Transform child in droppedObj.transform)
+            {
+                child.gameObject.layer = LayerMask.NameToLayer("Default");
+            }
+
             droppedObj.layer = LayerMask.NameToLayer("Default");
             foreach (Transform child in droppedObj.transform)
             {
